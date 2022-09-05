@@ -6,26 +6,32 @@
 
 
 	<insert id="insert">
-		INSERT INTO boards(id, title, content, usersId, createdAt)
-		VALUES(boards_seq.nextval, #{title}, #{content}, #{usersId}, sysdate)
+		INSERT INTO boards(id, title, content, usersId,
+		createdAt)
+		VALUES(boards_seq.nextval, #{title}, #{content}, #{usersId},
+		sysdate)
 	</insert>
 
 	<select id="findById"
 		resultType="site.metacoding.red.domain.boards.Boards">
-		
+
 	</select>
 
 	<select id="findAll"
-		resultType="site.metacoding.red.domain.boards.Boards">
-		
+		resultType="site.metacoding.red.domain.boards.mapper.MainView">
+		SELECT b.id, b.title, u.username
+		FROM boards b 
+		INNER JOIN users u
+		ON b.usersId = u.id
+		ORDER BY b.id DESC
 	</select>
 
 	<delete id="delete">
-		
+
 	</delete>
 
 	<update id="update">
-		
+
 	</update>
 
 </mapper>
