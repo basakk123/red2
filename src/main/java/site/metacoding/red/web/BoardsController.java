@@ -46,9 +46,26 @@ public class BoardsController {
 	@GetMapping({ "/", "/boards" })
 	public String getBoardsList(Model model, Integer page) { // 0->0, 1->10, 2->20
 		if(page==null) page =0;	
-		int startNum=page*10;
+		int startNum=page*3;
 		List<MainDto> boardsList = boardsDao.findAll(startNum);
 		PagingDto paging = boardsDao.paging(page);
+	
+		final int blockCount = 5;
+		int currentBlock = page / blockCount; 
+		int startPageNum = 1+ blockCount * currentBlock;
+		int lastPageNum = 5+ blockCount * currentBlock;
+		
+		if (paging.getTotalPage()<lastPageNum) {
+			lastPageNum = paging.getTotalPage();
+		}
+		
+		paging.setBlockCount(blockCount);
+		paging.setCurrentBlock(currentBlock);
+		paging.setStartPageNum(startPageNum);
+		paging.setLastPageNum(lastPageNum);
+		
+		// 보드컨트롤러에서 paging.set~로 dto 완성
+		
 		model.addAttribute("paging", paging);
 		model.addAttribute("boardsList", boardsList);
 		return "boards/main";
