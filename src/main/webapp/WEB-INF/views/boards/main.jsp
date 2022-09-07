@@ -22,11 +22,48 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<!--  <h2>${param.page}</h2>
-	<ul class="pagination">
-		<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-		<li class="page-item"><a class="page-link" href="/?page=${param.page+1}">Next</a></li>
+
+	<div style="background-color: grey;">
+		<h3>totalCount : ${paging.totalCount}</h3>
+		<h3>totalPage : ${paging.totalPage}</h3>
+		<h3>currentPage : ${paging.currentPage}</h3>
+		<h3>isLast : ${paging.last}</h3>
+		<h3>isFirst : ${paging.first}</h3>
+	</div>
+
+	<!--  <ul class="pagination">
+		<c:choose>
+			<c:when test="${paging.first eq true}">
+				<li class="page-item disabled"><a class="page-link" href="?page=${paging.currentPage-1}">Previous</a></li>
+			</c:when>
+			<c:otherwise>
+				<li class="page-item"><a class="page-link" href="?page=${paging.currentPage-1}">Previous</a></li>
+			</c:otherwise>
+		</c:choose>
+		<c:forEach var="page" begin="1" end="${paging.totalPage}" step="1">
+			<li class="page-item"><a class="page-link" href="?page=${page-1}">${page}</a></li>
+		</c:forEach>
+		<c:choose>
+			<c:when test="${paging.last eq true}">
+				<li class="page-item disabled"><a class="page-link" href="?page=${paging.currentPage+1}">Next</a></li>
+			</c:when>
+			<c:otherwise>
+				<li class="page-item"><a class="page-link" href="?page=${paging.currentPage+1}">Next</a></li>
+			</c:otherwise>
+		</c:choose>
 	</ul>-->
+
+	<ul class="pagination">
+		<li class='page-item ${paging.first ? "disabled" : "" }'><a class="page-link"
+			href="?page=${paging.currentPage-1}">Previous</a></li>	
+		
+		<c:forEach var="page" begin="1" end="${paging.totalPage}" step="1">
+			<li class="page-item"><a class="page-link" href="?page=${page-1}">${page}</a></li>
+		</c:forEach>
+		
+		<li class='page-item ${paging.last ? "disabled" : "" }'><a class="page-link"
+			href="?page=${paging.currentPage+1}">Next</a></li>
+	</ul>
 
 
 </div>
