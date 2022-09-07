@@ -16,5 +16,15 @@ public class PagingDto {
 	private boolean isLast;
 	private boolean isFirst;
 	
-	
+	public void makeBlockInfo() {
+		this.blockCount = 5;
+
+		this.currentBlock = currentPage / blockCount;
+		this.startPageNum = 1 + blockCount * currentBlock;
+		this.lastPageNum = 5 + blockCount * currentBlock;
+
+		if (totalPage < lastPageNum) {
+			this.lastPageNum = totalPage;
+		}
+	}
 }
