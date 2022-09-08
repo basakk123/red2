@@ -5,9 +5,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import lombok.RequiredArgsConstructor;
+import site.metacoding.red.domain.boards.Boards;
 import site.metacoding.red.domain.users.Users;
 import site.metacoding.red.domain.users.UsersDao;
 import site.metacoding.red.web.dto.request.boards.UpdateDto;
@@ -70,5 +72,29 @@ public class UsersController {
 	@GetMapping("/updateForm")
 	public String updateForm() {
 		return "users/updateForm";
+	}
+	
+	@PostMapping("/delete")
+	public String deleteUser() {
+		Users principal = (Users) session.getAttribute("principal");
+		Users usersPS = usersDao.findById(principal.getId());
+
+		// 비정상 요청 체크
+		if (usersPS == null) { // if는 비정상 로직을 타게 해서 걸러내는 필터 역할을 하는게 좋다.
+			return "errors/badPage";
+		}
+
+		// 인증 체크
+		if (principal == null) {
+			return "redirect:/loginForm";
+		}
+
+		// 권한 체크 ( 세션 principal.getId() 와 boardsPS의 userId를 비교)
+		if (principal.getId() != usersPS.getId()) {
+			return "errors/badPage";
+		}
+
+		usersDao.delete(usersPS.getId());
+		return "redirect:/";
 	}
 }
