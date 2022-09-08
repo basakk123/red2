@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import site.metacoding.red.web.dto.request.boards.UpdateDto;
 
 @NoArgsConstructor
 @Setter
@@ -22,6 +23,11 @@ public class Boards {
 		this.title = title;
 		this.content = content;
 		this.usersId = usersId;
+	}
+	
+	public void 글수정(UpdateDto updateDto) {
+		this.title = updateDto.getTitle();
+		this.content = updateDto.getContent();
 	}
 
 }
