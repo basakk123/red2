@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PagingDto {
+	private String keyword;
 	private Integer currentBlock; // 첫번째 블락 (6페이지로 가는 순간 2번째 블락), 변수
 	private Integer blockCount; // 한 페이지에 페이지 갯수(5) 1-5, 6-10, 상수
 	private Integer startPageNum; //1->6->11, 변수
@@ -16,7 +17,8 @@ public class PagingDto {
 	private boolean isLast;
 	private boolean isFirst;
 	
-	public void makeBlockInfo() {
+	public void makeBlockInfo(String keyword) {
+		this.keyword = keyword;
 		this.blockCount = 5;
 
 		this.currentBlock = currentPage / blockCount;

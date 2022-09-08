@@ -49,10 +49,10 @@ public class BoardsController {
 		if (principal.getId() != boardsPS.getUsersId()) {
 			return "errors/badPage";
 		}
-		
+
 		// 2. 변경
 		boardsPS.글수정(updateDto);
-		
+
 		// 3. 수행
 		boardsDao.update(boardsPS);
 
@@ -121,19 +121,36 @@ public class BoardsController {
 
 	// http://localhost:8000/
 	// http://localhost:8000/?page=0 or 1 or 2
+	// 1번째 ?page=0&keyword=스프링 (프라이머리 키 아니니까 쿼리스트링)
 	@GetMapping({ "/", "/boards" })
-	public String getBoardsList(Model model, Integer page) { // 0->0, 1->10, 2->20
-		if (page == null)
+	public String getBoardsList(Model model, Integer page, String keyword) { // 0->0, 1->10, 2->20
+		if (page == null) {
 			page = 0;
+		}
+
 		int startNum = page * 3;
-		List<MainDto> boardsList = boardsDao.findAll(startNum);
-		PagingDto paging = boardsDao.paging(page);
 
-		paging.makeBlockInfo();
+		if (keyword == null || keyword.isEmpty()) {
+			List<MainDto> boardsList = boardsDao.findAll(startNum);
+			PagingDto paging = boardsDao.paging(page, null);
 
-		model.addAttribute("paging", paging);
-		model.addAttribute("boardsList", boardsList);
+			paging.makeBlockInfo(keyword);
+
+			model.addAttribute("paging", paging);
+			model.addAttribute("boardsList", boardsList);
+
+		} else {
+			List<MainDto> boardsList = boardsDao.findSearch(startNum, keyword);
+			PagingDto paging = boardsDao.paging(page, keyword);
+
+			paging.makeBlockInfo(keyword);
+
+			model.addAttribute("paging", paging);
+			model.addAttribute("boardsList", boardsList);
+
+		}
 		return "boards/main";
+
 	}
 
 	@GetMapping("/boards/{id}")
