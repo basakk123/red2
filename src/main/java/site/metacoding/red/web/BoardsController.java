@@ -28,14 +28,14 @@ public class BoardsController {
 	// @PostMapping("/boards/{id}/delete")
 	// @PostMapping("/boards/{id}/update")
 
-	@PostMapping("/boards/{id}/delete")
-	public String deleteBoards(@PathVariable Integer id) {
-		Users principal = (Users) session.getAttribute("principal");
+	@GetMapping("/boards/{id}/updateForm")
+	public String updateForm(@PathVariable Integer id, Model model) {
 		Boards boardsPS = boardsDao.findById(id);
-		
+		Users principal = (Users) session.getAttribute("principal");
+
 		// 비정상 요청 체크
 		if (boardsPS == null) { // if는 비정상 로직을 타게 해서 걸러내는 필터 역할을 하는게 좋다.
-			return "redirect:/boards/" + id;
+			return "errors/badPage";
 		}
 
 		// 인증 체크
@@ -45,10 +45,34 @@ public class BoardsController {
 
 		// 권한 체크 ( 세션 principal.getId() 와 boardsPS의 userId를 비교)
 		if (principal.getId() != boardsPS.getUsersId()) {
-			return "redirect:/boards/" + id;
+			return "errors/badPage";
 		}
-	
-		boardsDao.delete(id);
+
+		model.addAttribute("boards", boardsPS);
+		return "boards/updateForm";
+	}
+
+	@PostMapping("/boards/{id}/delete")
+	public String deleteBoards(@PathVariable Integer id) {
+		Users principal = (Users) session.getAttribute("principal");
+		Boards boardsPS = boardsDao.findById(id);
+
+		// 비정상 요청 체크
+		if (boardsPS == null) { // if는 비정상 로직을 타게 해서 걸러내는 필터 역할을 하는게 좋다.
+			return "errors/badPage";
+		}
+
+		// 인증 체크
+		if (principal == null) {
+			return "redirect:/loginForm";
+		}
+
+		// 권한 체크 ( 세션 principal.getId() 와 boardsPS의 userId를 비교)
+		if (principal.getId() != boardsPS.getUsersId()) {
+			return "errors/badPage";
+		}
+
+		boardsDao.delete(id); // 핵심 로직
 		return "redirect:/";
 	}
 
@@ -74,22 +98,8 @@ public class BoardsController {
 		List<MainDto> boardsList = boardsDao.findAll(startNum);
 		PagingDto paging = boardsDao.paging(page);
 
-//		final int blockCount = 5;
-//		int currentBlock = page / blockCount;
-//		int startPageNum = 1 + blockCount * currentBlock;
-//		int lastPageNum = 5 + blockCount * currentBlock;
-//
-//		if (paging.getTotalPage() < lastPageNum) {
-//			lastPageNum = paging.getTotalPage();
-//		}
-//// 보드컨트롤러에서 paging.set~로 dto 완성
-
-//		paging.setBlockCount(blockCount);
-//		paging.setCurrentBlock(currentBlock);
-//		paging.setStartPageNum(startPageNum);
-//		paging.setLastPageNum(lastPageNum);
 		paging.makeBlockInfo();
-		
+
 		model.addAttribute("paging", paging);
 		model.addAttribute("boardsList", boardsList);
 		return "boards/main";
